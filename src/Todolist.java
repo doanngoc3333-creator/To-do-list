@@ -65,19 +65,31 @@ public class Todolist{
                 Task t = todo.getTodoList().get(i);
                 JPanel taskPanel = new JPanel(); // tao task o day nha
                 taskPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-                JLabel task = new JLabel(t.toString());
+                JLabel task;
+                if(t.isDone()==true) {
+                    task = new JLabel("<html><s>"+t.toString()+" </s></html>");
+                } else {
+                    task = new JLabel(t.toString());
+                }
                 taskPanel.add(task);
                 JButton delete = new JButton("X");
                 int index = i;
-                delete.addActionListener( e1->{
+                delete.addActionListener( e1->{ // delete task
                     todo.deleteTodo(index);
+                    System.out.println("Delete index: "+index);
+                    System.out.println("List index: "+ todo.getTodoList().size());
                     button.doClick();
                 });
                 JButton tick = new JButton("V");
                 int index1 = i;
-                tick.addActionListener( e2->{
+                tick.addActionListener( e2->{ // done
                     todo.markDone(index1);
                     button.doClick();
+                    if(t.isDone()==true) {
+                        new JLabel("<html><s>"+t.toString()+" </s></html>");
+                    } else {
+                        new JLabel(t.toString());
+                    }
                 });
                 taskPanel.add(delete);
                 taskPanel.add(tick);
