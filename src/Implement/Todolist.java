@@ -1,8 +1,11 @@
+package Implement;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-class Task{ // class nay la work rieng le
+import Interface.TodoItem;
+class Task implements TodoItem{ // class nay la work rieng le
     private String todo;
     private boolean done;
     Task(String todo,boolean done){
@@ -15,16 +18,21 @@ class Task{ // class nay la work rieng le
     public String toString(){ // cai nay in ra
         return todo;
     } // in ra
+    @Override
     public void markDone(){
         this.done=true;
     } // danh dau
     public boolean isDone(){
         return done;
     } // tra ketqua
+    @Override
+    public String getTodo(){
+        return this.todo;
+    } // wait
 }
 class MgrTodo { // cai nay la list work
-    List<Task> todoList = new ArrayList<>();
-    public List<Task> getTodoList() {
+    List<TodoItem> todoList = new ArrayList<>();
+    public List<TodoItem> getTodoList() {
         return todoList;
     }
     public void addTodo(String text){
@@ -62,7 +70,7 @@ public class Todolist{
             }
             panel.removeAll();
             for(int i=0;i<todo.getTodoList().size();i++){
-                Task t = todo.getTodoList().get(i);
+                TodoItem t = todo.getTodoList().get(i);
                 JPanel taskPanel = new JPanel(); // tao task o day nha
                 taskPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
                 JLabel task;
@@ -100,7 +108,7 @@ public class Todolist{
             panel.revalidate();
             panel.repaint();
             input.setText("");
-                });
+        });
         inputPanel.add(input,BorderLayout.EAST);
         inputPanel.add(button,BorderLayout.WEST);
         frame.add(inputPanel,BorderLayout.NORTH);
