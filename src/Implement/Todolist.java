@@ -1,54 +1,11 @@
 package Implement;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import Interface.TodoItem;
-class Task implements TodoItem{ // class nay la work rieng le
-    private String todo;
-    private boolean done;
-    Task(String todo,boolean done){
-        this.todo=todo;
-        this.done=false;
-    } //constructor nha
-    public void setTodo(String work){
-        this.todo=work;
-    } // cai nay la setter nha
-    public String toString(){ // cai nay in ra
-        return todo;
-    } // in ra
-    @Override
-    public void markDone(){
-        this.done=true;
-    } // danh dau
-    public boolean isDone(){
-        return done;
-    } // tra ketqua
-    @Override
-    public String getTodo(){
-        return this.todo;
-    } // wait
-}
-class MgrTodo { // cai nay la list work
-    List<TodoItem> todoList = new ArrayList<>();
-    public List<TodoItem> getTodoList() {
-        return todoList;
-    }
-    public void addTodo(String text){
-        todoList.add(new Task(text,false)); // goi constructor ra
-    }
-    public void deleteTodo(int index){
-        if(index>=0&&index<todoList.size()){
-            todoList.remove(index);
-        }
-    }
-    public void markDone(int index){
-        if(index>=0&&index<todoList.size()){
-            todoList.get(index).markDone();
-        }
-    }
-}
+import Implement.Task;
+import Implement.MgrTodo;
 public class Todolist{
     public static void main(String [] args){
         JPanel panel = new JPanel();
@@ -63,6 +20,26 @@ public class Todolist{
         JPanel inputPanel = new JPanel();
         inputPanel.add(input);
         inputPanel.add(button);
+        JButton bin = new JButton("BIN");
+        bin.addActionListener( e3 ->{
+            panel.removeAll();
+           for (int i=0;i<todo.getTrash().size();i++){
+               TodoItem t = todo.getTrash().get(i);
+               JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+               JLabel Task = new JLabel(t.toString());
+               taskPanel.add(Task);
+               int index = i;
+               JButton Restore = new JButton("Restore");
+               Restore.addActionListener(e4->{
+                   todo.restoreTrash(index);
+                   bin.doClick();
+               });
+               taskPanel.add(Restore);
+               panel.add(taskPanel);
+           }
+            panel.revalidate();
+            panel.repaint();
+        });
         button.addActionListener(e ->{
             String text = input.getText();
             if(!text.isEmpty()){
@@ -86,7 +63,7 @@ public class Todolist{
                     todo.deleteTodo(index);
                     System.out.println("Delete index: "+index);
                     System.out.println("List index: "+ todo.getTodoList().size());
-                    button.doClick();
+                    bin.doClick();
                 });
                 JButton tick = new JButton("V");
                 int index1 = i;
@@ -111,6 +88,7 @@ public class Todolist{
         });
         inputPanel.add(input,BorderLayout.EAST);
         inputPanel.add(button,BorderLayout.WEST);
+        inputPanel.add(bin,BorderLayout.WEST);
         frame.add(inputPanel,BorderLayout.NORTH);
         frame.add(panel,BorderLayout.CENTER);
         frame.setVisible(true);
