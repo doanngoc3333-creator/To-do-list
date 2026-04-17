@@ -1,12 +1,40 @@
 package Implement;
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+
 import Interface.TodoItem;
-import Implement.Task;
-import Implement.MgrTodo;
-public class Todolist{
+
+public class Todolist_run{
+    public static void renderTodo(JPanel panel, MgrTodo todo){
+        panel.removeAll();
+        for(int i=0;i<todo.getTodoList().size();i++){
+            TodoItem t = todo.getTodoList().get(i);
+            JPanel taskPanel  = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            JButton tick = new JButton("V");
+            JButton delete = new JButton("X");
+            JLabel task = new JLabel();
+            if(t.isDone()==true){
+                task = new JLabel("<html><s>"+t.toString()+"</s></html>");
+            } else{
+                task = new JLabel(t.toString());
+            }
+            taskPanel.add(task);
+            int index = i;
+            tick.addActionListener(e->{
+                todo.markDone(index);
+                renderTodo(panel,todo);
+            });
+            delete.addActionListener(e1 ->{
+                todo.deleteTodo(index);
+                renderTodo(panel,todo);
+        });
+        taskPanel.add(tick);
+        taskPanel.add(delete);
+        panel.add(taskPanel);
+    }
+        panel.revalidate();
+        panel.repaint();
+}
     public static void main(String [] args){
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -20,7 +48,7 @@ public class Todolist{
         JPanel inputPanel = new JPanel();
         inputPanel.add(input);
         inputPanel.add(button);
-        JButton bin = new JButton("BIN");
+        JButton bin = new JButton("BIN"); // CAN SUA
         bin.addActionListener( e3 ->{
             panel.removeAll();
            for (int i=0;i<todo.getTrash().size();i++){
@@ -29,7 +57,7 @@ public class Todolist{
                JLabel Task = new JLabel(t.toString());
                taskPanel.add(Task);
                int index = i;
-               JButton Restore = new JButton("Restore");
+               JButton Restore = new JButton("Restore"); // CAN SUA
                Restore.addActionListener(e4->{
                    todo.restoreTrash(index);
                    bin.doClick();
