@@ -1,7 +1,8 @@
 package Implement;
 import javax.swing.*;
 import java.awt.*;
-
+import Implement.MgrTodo;
+import Implement.Task;
 import Interface.TodoItem;
 
 public class Todolist_run{
@@ -35,6 +36,21 @@ public class Todolist_run{
         panel.revalidate();
         panel.repaint();
 }
+public static void renderBin(JPanel panel,MgrTodo todo) {
+    panel.removeAll();
+    for (int i=0;i<todo.getTrash().size();i++){
+        TodoItem t = todo.getTrash().get(i);
+        JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel task = new JLabel(t.toString());
+        JButton restore = new JButton("RESTORE");
+        int index = i;
+        restore.addActionListener(e -> { todo.restoreTrash(index); renderBin(panel, todo); });
+        taskPanel.add(task);
+        taskPanel.add(restore);
+        panel.add(taskPanel); }
+    panel.revalidate();
+    panel.repaint();
+    }
     public static void main(String [] args){
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
