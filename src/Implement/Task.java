@@ -27,5 +27,5 @@ class Task implements TodoItem { // class nay la work rieng le
     @Override
     public String getTodo(){
         return this.todo;
-    } // wait
+    } // in ra
 }

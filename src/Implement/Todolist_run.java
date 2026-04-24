@@ -4,8 +4,15 @@ import java.awt.*;
 import Implement.MgrTodo;
 import Implement.Task;
 import Interface.TodoItem;
-
 public class Todolist_run{
+    static boolean showingBin = true;
+    public static void refresh(JPanel panel,MgrTodo todo){
+        if (showingBin==true){
+            renderBin(panel,todo);
+        } else if (showingBin == false){
+            renderTodo(panel,todo);
+        }
+    }
     public static void renderTodo(JPanel panel, MgrTodo todo){
         panel.removeAll();
         for(int i=0;i<todo.getTodoList().size();i++){
@@ -59,79 +66,35 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         frame.setSize(1080,720);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MgrTodo todo = new MgrTodo();
-        JTextField input = new JTextField(50);
+
+        JTextField input = new JTextField(92); // add task
         JButton button = new JButton("ADD");
-        JPanel inputPanel = new JPanel();
+        JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(input);
         inputPanel.add(button);
-        JButton bin = new JButton("BIN"); // CAN SUA
+
+        JButton bin = new JButton("BIN"); // Bin
         bin.addActionListener( e3 ->{
-            panel.removeAll();
-           for (int i=0;i<todo.getTrash().size();i++){
-               TodoItem t = todo.getTrash().get(i);
-               JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-               JLabel Task = new JLabel(t.toString());
-               taskPanel.add(Task);
-               int index = i;
-               JButton Restore = new JButton("Restore"); // CAN SUA
-               Restore.addActionListener(e4->{
-                   todo.restoreTrash(index);
-                   bin.doClick();
-               });
-               taskPanel.add(Restore);
-               panel.add(taskPanel);
-           }
-            panel.revalidate();
-            panel.repaint();
+            showingBin = true;
+           refresh(panel,todo);
         });
         button.addActionListener(e ->{
             String text = input.getText();
-            if(!text.isEmpty()){
+            if(text.isEmpty() == false){
                 todo.addTodo(text);
             }
-            panel.removeAll();
-            for(int i=0;i<todo.getTodoList().size();i++){
-                TodoItem t = todo.getTodoList().get(i);
-                JPanel taskPanel = new JPanel(); // tao task o day nha
-                taskPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-                JLabel task;
-                if(t.isDone()==true) {
-                    task = new JLabel("<html><s>"+t.toString()+" </s></html>");
-                } else {
-                    task = new JLabel(t.toString());
-                }
-                taskPanel.add(task);
-                JButton delete = new JButton("X");
-                int index = i;
-                delete.addActionListener( e1->{ // delete task
-                    todo.deleteTodo(index);
-                    System.out.println("Delete index: "+index);
-                    System.out.println("List index: "+ todo.getTodoList().size());
-                    bin.doClick();
-                });
-                JButton tick = new JButton("V");
-                int index1 = i;
-                tick.addActionListener( e2->{ // done
-                    todo.markDone(index1);
-                    button.doClick();
-                    if(t.isDone()==true) {
-                        new JLabel("<html><s>"+t.toString()+" </s></html>");
-                    } else {
-                        new JLabel(t.toString());
-                    }
-                });
-                taskPanel.add(delete);
-                taskPanel.add(tick);
-                panel.add(taskPanel);
-                panel.add(Box.createVerticalStrut(1));
-                taskPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-            }
-            panel.revalidate();
-            panel.repaint();
             input.setText("");
+            showingBin = false;
+            refresh(panel,todo);
         });
+        JButton HOME = new JButton("HOME");
+        HOME.addActionListener(e4->{
+            showingBin = false;
+            refresh(panel,todo);
+        });
+        inputPanel.add(HOME,BorderLayout.NORTH);
         inputPanel.add(input,BorderLayout.EAST);
-        inputPanel.add(button,BorderLayout.WEST);
+        inputPanel.add(button,BorderLayout.SOUTH);
         inputPanel.add(bin,BorderLayout.WEST);
         frame.add(inputPanel,BorderLayout.NORTH);
         frame.add(panel,BorderLayout.CENTER);
