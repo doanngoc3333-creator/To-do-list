@@ -18,6 +18,8 @@ public class Todolist_run{
         for(int i=0;i<todo.getTodoList().size();i++){
             TodoItem t = todo.getTodoList().get(i);
             JPanel taskPanel  = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            taskPanel.setMaximumSize(new Dimension (Integer.MAX_VALUE, 40));
+            taskPanel.setMinimumSize(new Dimension(Integer.MIN_VALUE, 40));
             JButton tick = new JButton("V");
             JButton delete = new JButton("X");
             JLabel task = new JLabel();
@@ -30,11 +32,12 @@ public class Todolist_run{
             int index = i;
             tick.addActionListener(e->{
                 todo.markDone(index);
-                renderTodo(panel,todo);
+                showingBin = false;
+                refresh(panel,todo);
             });
             delete.addActionListener(e1 ->{
                 todo.deleteTodo(index);
-                renderTodo(panel,todo);
+                refresh(panel,todo);
         });
         taskPanel.add(tick);
         taskPanel.add(delete);
@@ -48,10 +51,13 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
     for (int i=0;i<todo.getTrash().size();i++){
         TodoItem t = todo.getTrash().get(i);
         JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        taskPanel.setMaximumSize(new Dimension (Integer.MAX_VALUE, 40));
+        taskPanel.setMinimumSize(new Dimension(Integer.MIN_VALUE, 40));
         JLabel task = new JLabel(t.toString());
         JButton restore = new JButton("RESTORE");
         int index = i;
-        restore.addActionListener(e -> { todo.restoreTrash(index); renderBin(panel, todo); });
+        restore.addActionListener(e -> { todo.restoreTrash(index);
+            refresh(panel, todo);});
         taskPanel.add(task);
         taskPanel.add(restore);
         panel.add(taskPanel); }
@@ -98,6 +104,7 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         inputPanel.add(bin,BorderLayout.WEST);
         frame.add(inputPanel,BorderLayout.NORTH);
         frame.add(panel,BorderLayout.CENTER);
+        refresh(panel,todo);
         frame.setVisible(true);
     }
 }
