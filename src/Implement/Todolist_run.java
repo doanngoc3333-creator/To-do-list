@@ -72,6 +72,8 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         frame.setSize(1080,720);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MgrTodo todo = new MgrTodo();
+        fileText storage = new fileText();
+        storage.loadfromFILE(todo);
 
         JTextField input = new JTextField(92); // add task
         JButton button = new JButton("ADD");
