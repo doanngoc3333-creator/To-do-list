@@ -22,7 +22,8 @@ public class fileText {
         try {
             BufferedWriter text = new BufferedWriter(new FileWriter(file));
             for (TodoItem task : todo.getTodoList()) {
-                text.write("TODO| " + (task.isDone() ? 1 : 0) + "|" + task.toString());
+                Task t = (Task) task;
+                text.write((task.isDone() ? 1 : 0) + "|" + t.getPriority() + "|" + t.getTodo());
                 text.newLine();
             }
             text.close();
@@ -41,8 +42,11 @@ public class fileText {
             while ((line = reader.readLine()) !=null) {
                 String[] part = line.split("\\|");
                 if (part.length == 3) {
-                    todo.addTodo(part[2]);
-                    if (part[1].trim().equals("1")) {
+                    boolean done = part[0].trim().equals("1");
+                    Priority priority = Priority.valueOf(part[1].trim());
+                    todo.addTodo(part[2], priority);
+
+                    if (done) {
                         todo.markDone(todo.getTodoList().size() - 1);
                     }
                 }

@@ -11,8 +11,8 @@ class MgrTodo { // cai nay la list work
         return todoList;
     }
     public List<TodoItem> getTrash (){ return trash;}
-    public void addTodo(String text){
-        todoList.add(new Task(text,false)); // goi constructor ra
+    public void addTodo(String text,Priority P){
+        todoList.add(new Task(text,false,P)); // goi constructor ra
     }
     public void deleteTodo(int index){ // xoa
         if(index>=0&&index<todoList.size()){

@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import Implement.MgrTodo;
 import Implement.Task;
+import Implement.Priority;
 import Interface.TodoItem;
 public class Todolist_run{
     static boolean showingBin = true;
@@ -81,6 +82,8 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         inputPanel.add(input);
         inputPanel.add(button);
 
+        JComboBox<Priority> priorityBox = new JComboBox<>(Priority.values());
+
         JButton bin = new JButton("BIN"); // Bin
         bin.addActionListener( e3 ->{
             showingBin = true;
@@ -89,7 +92,8 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         button.addActionListener(e ->{
             String text = input.getText();
             if(text.isEmpty() == false){
-                todo.addTodo(text);
+                Priority P = (Priority) priorityBox.getSelectedItem();
+                todo.addTodo(text,P);
             }
             input.setText("");
             showingBin = false;
@@ -100,6 +104,7 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
             showingBin = false;
             refresh(panel,todo);
         });
+        inputPanel.add(priorityBox,BorderLayout.CENTER);
         inputPanel.add(HOME,BorderLayout.NORTH);
         inputPanel.add(input,BorderLayout.EAST);
         inputPanel.add(button,BorderLayout.SOUTH);
