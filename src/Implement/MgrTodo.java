@@ -27,6 +27,11 @@ class MgrTodo { // cai nay la list work
             trash.remove(index);
         }
     }
+    public void deleteForever(int index){
+        if (index>=0&& index<trash.size()){
+            trash.remove(index);
+        }
+    }
     public void markDone(int index){
         if(index>=0&&index<todoList.size()){
             todoList.get(index).markDone();

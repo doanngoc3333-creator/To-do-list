@@ -18,7 +18,7 @@ public class Todolist_run{
         panel.removeAll();
         for(int i=0;i<todo.getTodoList().size();i++){
             TodoItem t = todo.getTodoList().get(i);
-            JPanel taskPanel  = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            JPanel taskPanel  = new JPanel(new FlowLayout(FlowLayout.LEFT ,0,0));
             taskPanel.setMaximumSize(new Dimension (Integer.MAX_VALUE, 40));
             taskPanel.setMinimumSize(new Dimension(Integer.MIN_VALUE, 40));
             JButton tick = new JButton("V");
@@ -51,7 +51,7 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
     panel.removeAll();
     for (int i=0;i<todo.getTrash().size();i++){
         TodoItem t = todo.getTrash().get(i);
-        JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
         taskPanel.setMaximumSize(new Dimension (Integer.MAX_VALUE, 40));
         taskPanel.setMinimumSize(new Dimension(Integer.MIN_VALUE, 40));
         JLabel task = new JLabel(t.toString());
@@ -59,6 +59,12 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         int index = i;
         restore.addActionListener(e -> { todo.restoreTrash(index);
             refresh(panel, todo);});
+        JButton deleteForever = new JButton("X");
+        deleteForever.addActionListener(e->{
+            todo.deleteForever(index);
+            refresh(panel,todo);
+        });
+        taskPanel.add(deleteForever);
         taskPanel.add(task);
         taskPanel.add(restore);
         panel.add(taskPanel); }
@@ -70,7 +76,6 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.LIGHT_GRAY);
         JFrame frame = new JFrame();
-        frame.setSize(1080,720);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MgrTodo todo = new MgrTodo();
         fileText storage = new fileText();
@@ -111,6 +116,7 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         inputPanel.add(bin,BorderLayout.WEST);
         frame.add(inputPanel,BorderLayout.NORTH);
         frame.add(panel,BorderLayout.CENTER);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         refresh(panel,todo);
         frame.setVisible(true);
     }
