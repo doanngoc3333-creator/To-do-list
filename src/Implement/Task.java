@@ -1,4 +1,5 @@
 package Implement;
+import java.time.LocalDate;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -8,11 +9,19 @@ class Task implements TodoItem { // class nay la work rieng le
     private String todo;
     private boolean done;
     private Priority P;
-    Task(String todo,boolean done,Priority P){
+    private LocalDate dueDate;
+    Task(String todo,boolean done,Priority P,LocalDate dueDate){
         this.todo=todo;
-        this.P=P;
         this.done=false;
+        this.P=P;
+        this.dueDate = dueDate;
     } //constructor nha
+    public LocalDate getDate(){
+        return dueDate;
+    }
+    public boolean isOverdue() {
+        return !done&& LocalDate.now().isAfter(dueDate);
+    }
     public void setTodo(String work){
         this.todo=work;
     } // cai nay la setter nha

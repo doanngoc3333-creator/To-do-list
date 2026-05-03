@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.time.LocalDate;
 public class fileText {
     private File file;
 
@@ -23,7 +24,7 @@ public class fileText {
             BufferedWriter text = new BufferedWriter(new FileWriter(file));
             for (TodoItem task : todo.getTodoList()) {
                 Task t = (Task) task;
-                text.write((task.isDone() ? 1 : 0) + "|" + t.getPriority() + "|" + t.getTodo());
+                text.write((task.isDone() ? 1 : 0) + "|" + t.getPriority() + "|"+t.getDate()+"|" + t.getTodo());
                 text.newLine();
             }
             text.close();
@@ -41,11 +42,11 @@ public class fileText {
             String line;
             while ((line = reader.readLine()) !=null) {
                 String[] part = line.split("\\|");
-                if (part.length == 3) {
+                if (part.length == 4) {
+                    LocalDate dueDate = LocalDate.parse(part[2].trim());
                     boolean done = part[0].trim().equals("1");
                     Priority priority = Priority.valueOf(part[1].trim());
-                    todo.addTodo(part[2], priority);
-
+                    todo.addTodo(part[3], priority,dueDate);
                     if (done) {
                         todo.markDone(todo.getTodoList().size() - 1);
                     }

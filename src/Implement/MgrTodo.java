@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import Interface.TodoItem;
+import java.time.LocalDate;
 class MgrTodo { // cai nay la list work
     List<TodoItem> todoList = new ArrayList<>();
     List<TodoItem> trash = new ArrayList<>();
@@ -11,8 +12,8 @@ class MgrTodo { // cai nay la list work
         return todoList;
     }
     public List<TodoItem> getTrash (){ return trash;}
-    public void addTodo(String text,Priority P){
-        todoList.add(new Task(text,false,P)); // goi constructor ra
+    public void addTodo(String text,Priority P,LocalDate dueDate){
+        todoList.add(new Task(text,false,P,dueDate)); // goi constructor ra
     }
     public void deleteTodo(int index){ // xoa
         if(index>=0&&index<todoList.size()){

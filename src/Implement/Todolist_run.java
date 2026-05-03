@@ -5,6 +5,7 @@ import Implement.MgrTodo;
 import Implement.Task;
 import Implement.Priority;
 import Interface.TodoItem;
+import java.time.LocalDate;
 public class Todolist_run{
     static boolean showingBin = true;
     public static void refresh(JPanel panel,MgrTodo todo){
@@ -86,6 +87,7 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(input);
         inputPanel.add(button);
+        JTextField dueDateField = new JTextField("YYYY-MM-DD", 10);
 
         JComboBox<Priority> priorityBox = new JComboBox<>(Priority.values());
 
@@ -94,15 +96,17 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
             showingBin = true;
            refresh(panel,todo);
         });
-        button.addActionListener(e ->{
-            String text = input.getText();
-            if(text.isEmpty() == false){
+        button.addActionListener(e -> { // VAN DANG SUA
+            String text = input.getText().trim();
+            if (!text.isEmpty()) {
                 Priority P = (Priority) priorityBox.getSelectedItem();
-                todo.addTodo(text,P);
+                LocalDate dueDate = LocalDate.parse(dueDateField.getText().trim());
+                todo.addTodo(text, P, dueDate);
             }
             input.setText("");
+            dueDateField.setText("YYYY-MM-DD");
             showingBin = false;
-            refresh(panel,todo);
+            refresh(panel, todo);
         });
         JButton HOME = new JButton("HOME");
         HOME.addActionListener(e4->{
@@ -117,6 +121,7 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         frame.add(inputPanel,BorderLayout.NORTH);
         frame.add(panel,BorderLayout.CENTER);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        inputPanel.add(dueDateField, BorderLayout.WEST);
         refresh(panel,todo);
         frame.setVisible(true);
     }
