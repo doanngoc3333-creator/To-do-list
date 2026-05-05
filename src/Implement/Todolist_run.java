@@ -6,76 +6,94 @@ import Implement.Task;
 import Implement.Priority;
 import Interface.TodoItem;
 import java.time.LocalDate;
-public class Todolist_run{
-    static boolean showingBin = true;
-    public static void refresh(JPanel panel,MgrTodo todo){
-        if (showingBin==true){
-            renderBin(panel,todo);
-        } else if (showingBin == false){
-            renderTodo(panel,todo);
+import java.time.format.DateTimeParseException;
+
+public class Todolist_run {
+    static boolean showingBin = false; // man hinh home
+
+    public static void refresh(JPanel panel, MgrTodo todo, fileText storage) { // ham dieu huong
+        if (showingBin) {
+            renderBin(panel, todo, storage);
+        } else {
+            renderTodo(panel, todo, storage);
         }
+        storage.saveToFile(todo);
     }
-    public static void renderTodo(JPanel panel, MgrTodo todo){
+
+    public static void renderTodo(JPanel panel, MgrTodo todo, fileText storage) {
         panel.removeAll();
-        for(int i=0;i<todo.getTodoList().size();i++){
+        for (int i = 0; i < todo.getTodoList().size(); i++) {
             TodoItem t = todo.getTodoList().get(i);
-            JPanel taskPanel  = new JPanel(new FlowLayout(FlowLayout.LEFT ,0,0));
-            taskPanel.setMaximumSize(new Dimension (Integer.MAX_VALUE, 40));
+            JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)); // tao task o day nha
+            taskPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
             taskPanel.setMinimumSize(new Dimension(Integer.MIN_VALUE, 40));
+
             JButton tick = new JButton("V");
             JButton delete = new JButton("X");
             JLabel task = new JLabel();
-            if(t.isDone()==true){
-                task = new JLabel("<html><s>"+t.toString()+"</s></html>");
-            } else{
+
+            if (t.isDone()) {
+                task = new JLabel("<html><s>" + t.toString() + "</s></html>");
+            } else {
                 task = new JLabel(t.toString());
             }
+
             taskPanel.add(task);
             int index = i;
-            tick.addActionListener(e->{
+
+            tick.addActionListener(e -> { // done
                 todo.markDone(index);
-                showingBin = false;
-                refresh(panel,todo);
+                refresh(panel, todo, storage);
             });
-            delete.addActionListener(e1 ->{
+
+            delete.addActionListener(e1 -> { // delete task
                 todo.deleteTodo(index);
-                refresh(panel,todo);
-        });
-        taskPanel.add(tick);
-        taskPanel.add(delete);
-        panel.add(taskPanel);
-    }
+                refresh(panel, todo, storage);
+            });
+
+            taskPanel.add(delete);
+            taskPanel.add(tick);
+            panel.add(taskPanel);
+        }
         panel.revalidate();
         panel.repaint();
-}
-public static void renderBin(JPanel panel,MgrTodo todo) {
-    panel.removeAll();
-    for (int i=0;i<todo.getTrash().size();i++){
-        TodoItem t = todo.getTrash().get(i);
-        JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
-        taskPanel.setMaximumSize(new Dimension (Integer.MAX_VALUE, 40));
-        taskPanel.setMinimumSize(new Dimension(Integer.MIN_VALUE, 40));
-        JLabel task = new JLabel(t.toString());
-        JButton restore = new JButton("RESTORE");
-        int index = i;
-        restore.addActionListener(e -> { todo.restoreTrash(index);
-            refresh(panel, todo);});
-        JButton deleteForever = new JButton("X");
-        deleteForever.addActionListener(e->{
-            todo.deleteForever(index);
-            refresh(panel,todo);
-        });
-        taskPanel.add(deleteForever);
-        taskPanel.add(task);
-        taskPanel.add(restore);
-        panel.add(taskPanel); }
-    panel.revalidate();
-    panel.repaint();
     }
+
+    public static void renderBin(JPanel panel, MgrTodo todo, fileText storage) {
+        panel.removeAll();
+        for (int i = 0; i < todo.getTrash().size(); i++) {
+            TodoItem t = todo.getTrash().get(i);
+            JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            
+            taskPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+            taskPanel.setMinimumSize(new Dimension(Integer.MIN_VALUE, 40));
+
+            JLabel task = new JLabel(t.toString());
+            JButton restore = new JButton("RESTORE"); 
+            int index = i;
+            // khoi phuc xong se load lai man hinh
+            restore.addActionListener(e -> {
+                todo.restoreTrash(index);
+                refresh(panel, todo, storage);
+            });
+
+            taskPanel.add(task);
+            taskPanel.add(restore);
+            panel.add(taskPanel);
+        }
+        panel.revalidate();
+        panel.repaint();
+    }
+
     public static void main(String [] args){
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.LIGHT_GRAY);
+        
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MgrTodo todo = new MgrTodo();
@@ -94,35 +112,47 @@ public static void renderBin(JPanel panel,MgrTodo todo) {
         JButton bin = new JButton("BIN"); // Bin
         bin.addActionListener( e3 ->{
             showingBin = true;
-           refresh(panel,todo);
+           refresh(panel,todo, storage);
         });
-        button.addActionListener(e -> { // VAN DANG SUA
+        
+        java.awt.event.ActionListener addAction = e -> { // da sua lai
             String text = input.getText().trim();
             if (!text.isEmpty()) {
-                Priority P = (Priority) priorityBox.getSelectedItem();
-                LocalDate dueDate = LocalDate.parse(dueDateField.getText().trim());
-                todo.addTodo(text, P, dueDate);
+                try {
+                    Priority P = (Priority) priorityBox.getSelectedItem();
+                    LocalDate dueDate = LocalDate.parse(dueDateField.getText().trim());
+                    todo.addTodo(text, P, dueDate);
+                    input.setText("");
+                    dueDateField.setText(LocalDate.now().toString());
+                    showingBin = false;
+                    refresh(panel, todo, storage);
+                } catch (DateTimeParseException ex) {
+                    JOptionPane.showMessageDialog(null, "Format: YYYY-MM-DD", "Date Format Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
-            input.setText("");
-            dueDateField.setText("YYYY-MM-DD");
-            showingBin = false;
-            refresh(panel, todo);
-        });
+        };
+        
+        button.addActionListener(addAction);
+        input.addActionListener(addAction);
+        
         JButton HOME = new JButton("HOME");
         HOME.addActionListener(e4->{
             showingBin = false;
-            refresh(panel,todo);
+            refresh(panel, todo, storage);
         });
+        
         inputPanel.add(priorityBox,BorderLayout.CENTER);
         inputPanel.add(HOME,BorderLayout.NORTH);
         inputPanel.add(input,BorderLayout.EAST);
         inputPanel.add(button,BorderLayout.SOUTH);
         inputPanel.add(bin,BorderLayout.WEST);
+        
         frame.add(inputPanel,BorderLayout.NORTH);
-        frame.add(panel,BorderLayout.CENTER);
+        frame.add(scrollPane,BorderLayout.CENTER);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
         inputPanel.add(dueDateField, BorderLayout.WEST);
-        refresh(panel,todo);
+        refresh(panel,todo, storage);
         frame.setVisible(true);
     }
 }
